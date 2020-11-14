@@ -19,7 +19,7 @@ public class GreenbayApplication implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    userService.save(new User("name","pass"));
-    userService.save(new User("name2","pass2"));
+    userService.save(new User("name","pass",1000));
+    userService.save(new User("name2","pass2",2000));
   }
 }

@@ -26,4 +26,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Wrong Password"));
   }
 
+  @ExceptionHandler(NoTokenException.class)
+  public ResponseEntity<?> handleNoTokenException() {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Not Logged in"));
+  }
+
+  @ExceptionHandler(InvalidPriceException.class)
+  public ResponseEntity<?> handleInvalidPriceException() {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+        new ErrorResponse("Prices should be positive whole numbers!"));
+  }
+
+  @ExceptionHandler(InvalidUrlException.class)
+  public ResponseEntity<?> handleInvalidUrlException() {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+        new ErrorResponse("Invalid Url Provided!"));
+  }
+
 }
