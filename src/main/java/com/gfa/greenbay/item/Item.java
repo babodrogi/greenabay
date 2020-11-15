@@ -2,13 +2,16 @@ package com.gfa.greenbay.item;
 
 import com.gfa.greenbay.bid.Bid;
 import com.gfa.greenbay.user.User;
+import java.util.Date;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,7 +28,7 @@ public class Item {
   private String name;
   private String description;
   private String photoUrl;
-  @OneToMany(mappedBy = "item")
+  @OneToMany(mappedBy = "item",cascade = CascadeType.ALL)
   private List<Bid> bids;
   private Integer startingPrice;
   private Integer purchasePrice;
@@ -34,6 +37,7 @@ public class Item {
   private boolean sellable;
   @ManyToOne
   private User buyer;
+  private Date createdAt;
 
   public Item(String name, String description, String photoUrl, Integer startingPrice,
               Integer purchasePrice,
@@ -45,5 +49,9 @@ public class Item {
     this.purchasePrice = purchasePrice;
     this.seller = seller;
     sellable = true;
+    createdAt = new Date();
   }
+
+
+
 }

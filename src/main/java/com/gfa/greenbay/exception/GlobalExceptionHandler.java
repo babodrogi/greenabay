@@ -43,4 +43,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         new ErrorResponse("Invalid Url Provided!"));
   }
 
+  @ExceptionHandler(InvalidPageNumberException.class)
+  public ResponseEntity<?> handleInvalidPageNumberException() {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+        new ErrorResponse("Item listing page number should be a positive whole number!"));
+  }
+
+  @ExceptionHandler(NoSuchItemException.class)
+  public ResponseEntity<?> handleNoSuchItemException() {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+        new ErrorResponse("Item does not exist!"));
+  }
+
 }

@@ -3,6 +3,7 @@ package com.gfa.greenbay.user;
 import com.gfa.greenbay.bid.Bid;
 import com.gfa.greenbay.item.Item;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,7 +24,7 @@ public class User {
   private String username;
   private String password;
   private int greenBayDollars;
-  @OneToMany(mappedBy = "bidder")
+  @OneToMany(mappedBy = "bidder",cascade = CascadeType.ALL)
   private List<Bid> bids;
   @OneToMany(mappedBy = "seller")
   private List<Item> sellableItems;
@@ -34,5 +35,9 @@ public class User {
     this.username = username;
     this.password = password;
     this.greenBayDollars = greenBayDollars;
+  }
+
+  public User(String username) {
+    this.username = username;
   }
 }
