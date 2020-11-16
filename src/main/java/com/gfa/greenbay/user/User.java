@@ -36,9 +36,6 @@ public class User {
     this.username = username;
     this.password = password;
     this.greenBayDollars = greenBayDollars;
-    bids = new ArrayList<>();
-    sellableItems = new ArrayList<>();
-    boughtItems = new ArrayList<>();
   }
 
   public User(String username) {

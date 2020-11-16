@@ -34,4 +34,8 @@ public class Bid {
     this.item = item;
     this.bidder = bidder;
   }
+
+  public Bid(int amount) {
+    this.amount = amount;
+  }
 }

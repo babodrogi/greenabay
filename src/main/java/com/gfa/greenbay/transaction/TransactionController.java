@@ -64,10 +64,10 @@ public class TransactionController {
           throw new InSufficientBidAmountException();
         } else if (bid.getAmount() < item.getPurchasePrice()){
           transactionService.placeBid(item, bid);
-          return ResponseEntity.status(HttpStatus.OK).body(itemService.createItemPojo(item));
+          return ResponseEntity.status(HttpStatus.OK).body(itemService.createItemDao(item));
         }else {
           transactionService.buyItem(item, user);
-          return ResponseEntity.status(HttpStatus.OK).body(itemService.createItemPojo(item));
+          return ResponseEntity.status(HttpStatus.OK).body(itemService.createItemDao(item));
         }
       }
     }

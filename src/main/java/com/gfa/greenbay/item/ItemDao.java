@@ -1,15 +1,20 @@
 package com.gfa.greenbay.item;
 
+import com.gfa.greenbay.bid.Bid;
+import com.gfa.greenbay.user.User;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
 @Getter
-public class NewlyCreatedItemPojo {
+@AllArgsConstructor
+public class ItemDao {
   private String name;
   private String description;
   private String photoUrl;
-  private Integer startingPrice;
+  private List<Bid> bids;
   private Integer purchasePrice;
   private String seller;
+  private String sellable;
+  private String buyer;
 }

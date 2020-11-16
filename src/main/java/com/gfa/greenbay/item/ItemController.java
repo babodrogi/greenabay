@@ -59,7 +59,7 @@ public class ItemController {
       User user = userService.findByUsername(
           jwtTokenUtil.getUsernameFromToken(jwtTokenUtil.getTokenFromRequest(request)));
       Item newItem = itemService.createNewItemFromDto(newItemDto, user);
-      NewlyCreatedItemPojo responseItem =
+      NewlyCreatedItemDao responseItem =
           itemService.createReturnDtoFromRequestDto(newItemDto, user);
       itemService.save(newItem);
       return ResponseEntity.status(HttpStatus.CREATED).body(responseItem);
@@ -74,12 +74,12 @@ public class ItemController {
     } else if (jwtTokenUtil.isTokenExpired(jwtTokenUtil.getTokenFromRequest(request))) {
       throw new TokenExpiredException();
     } else if (n == null) {
-      return ResponseEntity.status(HttpStatus.OK).body(itemService.listListedSellableItemPojos(0));
+      return ResponseEntity.status(HttpStatus.OK).body(itemService.listListedSellableItemDaos(0));
     } else if (n - n.intValue() != 0 || n < 1) {
       throw new InvalidPageNumberException();
     } else {
       return ResponseEntity.status(HttpStatus.OK)
-          .body(itemService.listListedSellableItemPojos(n.intValue()));
+          .body(itemService.listListedSellableItemDaos(n.intValue()));
     }
   }
 
@@ -94,8 +94,8 @@ public class ItemController {
     } else if (item == null) {
       throw new NoSuchItemException();
     } else {
-      ItemPojo itemPojo = itemService.createItemPojo(item);
-      return ResponseEntity.status(HttpStatus.OK).body(itemPojo);
+      ItemDao itemDao = itemService.createItemDao(item);
+      return ResponseEntity.status(HttpStatus.OK).body(itemDao);
     }
   }
 

@@ -27,14 +27,14 @@ public class ItemService {
     return itemRepository.findNthFive(n * 5);
   }
 
-  public List<ListedSellableItemPojo> listListedSellableItemPojos(Integer n) {
-    List<ListedSellableItemPojo> list = new ArrayList<>();
+  public List<ListedSellableItemDao> listListedSellableItemDaos(Integer n) {
+    List<ListedSellableItemDao> list = new ArrayList<>();
     for (Item item : findNthFive(n)) {
       if (item.getBids().size() > 0) {
-        list.add(new ListedSellableItemPojo(item.getId(),item.getName(), item.getPhotoUrl(),
+        list.add(new ListedSellableItemDao(item.getId(),item.getName(), item.getPhotoUrl(),
             item.getBids().get(item.getBids().size() - 1)));
       } else {
-        list.add(new ListedSellableItemPojo(item.getId(),item.getName(), item.getPhotoUrl(),
+        list.add(new ListedSellableItemDao(item.getId(),item.getName(), item.getPhotoUrl(),
             null));
       }
     }
@@ -64,15 +64,15 @@ public class ItemService {
         user);
   }
 
-  public NewlyCreatedItemPojo createReturnDtoFromRequestDto(NewItemDto newItemDto, User user) {
-    return new NewlyCreatedItemPojo(newItemDto.getName(), newItemDto.getDescription(),
+  public NewlyCreatedItemDao createReturnDtoFromRequestDto(NewItemDto newItemDto, User user) {
+    return new NewlyCreatedItemDao(newItemDto.getName(), newItemDto.getDescription(),
         newItemDto.getPhotoUrl(),
         newItemDto.getStartingPrice().intValue(), newItemDto.getPurchasePrice().intValue(),
         user.getUsername());
   }
 
-  public ItemPojo createItemPojo(Item item) {
-    return new ItemPojo(item.getName(), item.getDescription(),
+  public ItemDao createItemDao(Item item) {
+    return new ItemDao(item.getName(), item.getDescription(),
         item.getPhotoUrl(), item.getBids(), item.getPurchasePrice(),
         item.getSeller().getUsername(),
         item.isSellable() ? "Not yet sold" : "Sold",

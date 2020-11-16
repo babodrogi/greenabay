@@ -54,4 +54,7 @@ public class Item {
     createdAt = new Date();
   }
 
+  public Item(List<Bid> bids) {
+    this.bids = bids;
+  }
 }
