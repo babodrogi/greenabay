@@ -1,5 +1,6 @@
 package com.gfa.greenbay.item;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gfa.greenbay.bid.Bid;
 import com.gfa.greenbay.user.User;
 import java.util.Date;
@@ -24,6 +25,7 @@ public class Item {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @JsonIgnore
   private Long id;
   private String name;
   private String description;
@@ -51,7 +53,5 @@ public class Item {
     sellable = true;
     createdAt = new Date();
   }
-
-
 
 }

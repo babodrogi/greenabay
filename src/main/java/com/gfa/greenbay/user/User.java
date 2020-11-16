@@ -2,6 +2,7 @@ package com.gfa.greenbay.user;
 
 import com.gfa.greenbay.bid.Bid;
 import com.gfa.greenbay.item.Item;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -35,6 +36,9 @@ public class User {
     this.username = username;
     this.password = password;
     this.greenBayDollars = greenBayDollars;
+    bids = new ArrayList<>();
+    sellableItems = new ArrayList<>();
+    boughtItems = new ArrayList<>();
   }
 
   public User(String username) {

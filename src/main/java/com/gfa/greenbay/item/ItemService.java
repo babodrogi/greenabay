@@ -1,48 +1,82 @@
 package com.gfa.greenbay.item;
 
-import com.gfa.greenbay.exception.NoSuchItemException;
+import com.gfa.greenbay.user.User;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ItemService {
   private ItemRepository itemRepository;
 
+  @Autowired
   public ItemService(ItemRepository itemRepository) {
     this.itemRepository = itemRepository;
   }
 
-  public void save(Item item){
+  public void save(Item item) {
     itemRepository.save(item);
   }
 
-  public List<Item> findAll(){
-   return itemRepository.findAll();
+  public List<Item> findAll() {
+    return itemRepository.findAll();
   }
 
-  public List<Item> findNthFive(Integer n){
+  public List<Item> findNthFive(Integer n) {
     return itemRepository.findNthFive(n * 5);
   }
 
-  public List<SellableItemListDto> listSellableItemDtos(Integer n){
-    List<SellableItemListDto> list = new ArrayList<>();
-    for (Item item :findNthFive(n)) {
+  public List<ListedSellableItemPojo> listListedSellableItemPojos(Integer n) {
+    List<ListedSellableItemPojo> list = new ArrayList<>();
+    for (Item item : findNthFive(n)) {
       if (item.getBids().size() > 0) {
-        list.add(new SellableItemListDto(item.getName(), item.getPhotoUrl(),
+        list.add(new ListedSellableItemPojo(item.getId(),item.getName(), item.getPhotoUrl(),
             item.getBids().get(item.getBids().size() - 1)));
-      }else {
-        list.add(new SellableItemListDto(item.getName(), item.getPhotoUrl(),
+      } else {
+        list.add(new ListedSellableItemPojo(item.getId(),item.getName(), item.getPhotoUrl(),
             null));
       }
     }
-  return list;
+    return list;
   }
 
-
-  public Item findById(Long id){
+  public Item findById(Long id) {
     return itemRepository.findById(id).orElse(null);
+  }
+
+  public boolean anyParameterMissing(NewItemDto newItemDto) {
+    return newItemDto.getName() == null || newItemDto.getDescription() == null ||
+        newItemDto.getPhotoUrl() == null || newItemDto.getStartingPrice() == null ||
+        newItemDto.getPurchasePrice() == null;
+  }
+
+  public boolean anyWronglyProvidedPriceParameter(NewItemDto newItemDto) {
+    return newItemDto.getStartingPrice() - newItemDto.getStartingPrice().intValue() != 0 ||
+        newItemDto.getStartingPrice() <= 0 ||
+        newItemDto.getPurchasePrice() - newItemDto.getPurchasePrice().intValue() != 0 ||
+        newItemDto.getPurchasePrice() <= 0;
+  }
+
+  public Item createNewItemFromDto(NewItemDto newItemDto, User user) {
+    return new Item(newItemDto.getName(), newItemDto.getDescription(), newItemDto.getPhotoUrl(),
+        newItemDto.getStartingPrice().intValue(), newItemDto.getPurchasePrice().intValue(),
+        user);
+  }
+
+  public NewlyCreatedItemPojo createReturnDtoFromRequestDto(NewItemDto newItemDto, User user) {
+    return new NewlyCreatedItemPojo(newItemDto.getName(), newItemDto.getDescription(),
+        newItemDto.getPhotoUrl(),
+        newItemDto.getStartingPrice().intValue(), newItemDto.getPurchasePrice().intValue(),
+        user.getUsername());
+  }
+
+  public ItemPojo createItemPojo(Item item) {
+    return new ItemPojo(item.getName(), item.getDescription(),
+        item.getPhotoUrl(), item.getBids(), item.getPurchasePrice(),
+        item.getSeller().getUsername(),
+        item.isSellable() ? "Not yet sold" : "Sold",
+        item.isSellable() ? null : item.getBuyer().getUsername());
   }
 
 }

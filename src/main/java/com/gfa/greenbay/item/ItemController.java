@@ -6,6 +6,8 @@ import com.gfa.greenbay.exception.InvalidUrlException;
 import com.gfa.greenbay.exception.MissingParametersException;
 import com.gfa.greenbay.exception.NoSuchItemException;
 import com.gfa.greenbay.exception.NoTokenException;
+import com.gfa.greenbay.exception.TokenExpiredException;
+
 import com.gfa.greenbay.user.User;
 import com.gfa.greenbay.user.UserService;
 import com.gfa.greenbay.util.JwtTokenUtil;
@@ -45,60 +47,55 @@ public class ItemController {
 
     if (request.getHeader("jwt") == null) {
       throw new NoTokenException();
-    } else if (newItemDto.getName() == null || newItemDto.getDescription() == null ||
-        newItemDto.getPhotoUrl() == null || newItemDto.getStartingPrice() == null ||
-        newItemDto.getPurchasePrice() == null) {
+    } else if (jwtTokenUtil.isTokenExpired(jwtTokenUtil.getTokenFromRequest(request))) {
+      throw new TokenExpiredException();
+    } else if (itemService.anyParameterMissing(newItemDto)) {
       throw new MissingParametersException(newItemDto);
-    } else if (newItemDto.getStartingPrice() - newItemDto.getStartingPrice().intValue() != 0 ||
-        newItemDto.getStartingPrice() <= 0 ||
-        newItemDto.getPurchasePrice() - newItemDto.getPurchasePrice().intValue() != 0 ||
-        newItemDto.getPurchasePrice() <= 0) {
+    } else if (itemService.anyWronglyProvidedPriceParameter(newItemDto)) {
       throw new InvalidPriceException();
     } else if (!urlValidator.isValid(newItemDto.getPhotoUrl())) {
       throw new InvalidUrlException();
     } else {
-      User user = userService.
-          findByUsername(
-              jwtTokenUtil.getUsernameFromToken(jwtTokenUtil.getTokenFromRequest(request)));
-      Item newItem =
-          new Item(newItemDto.getName(), newItemDto.getDescription(), newItemDto.getPhotoUrl(),
-              newItemDto.getStartingPrice().intValue(), newItemDto.getPurchasePrice().intValue(),
-              user);
-      NewlyCreatedItemDto responseItem =
-          new NewlyCreatedItemDto(newItemDto.getName(), newItemDto.getDescription(),
-              newItemDto.getPhotoUrl(),
-              newItemDto.getStartingPrice().intValue(), newItemDto.getPurchasePrice().intValue(),
-              user.getUsername());
-
+      User user = userService.findByUsername(
+          jwtTokenUtil.getUsernameFromToken(jwtTokenUtil.getTokenFromRequest(request)));
+      Item newItem = itemService.createNewItemFromDto(newItemDto, user);
+      NewlyCreatedItemPojo responseItem =
+          itemService.createReturnDtoFromRequestDto(newItemDto, user);
       itemService.save(newItem);
-      return ResponseEntity.status(HttpStatus.OK).body(responseItem);
+      return ResponseEntity.status(HttpStatus.CREATED).body(responseItem);
     }
   }
 
   @GetMapping("/items")
-  public ResponseEntity<?> list(@RequestParam(required = false) Double n) {
-    if (n == null) {
-      return ResponseEntity.status(HttpStatus.OK).body(itemService.listSellableItemDtos(0));
+  public ResponseEntity<?> list(@RequestParam(required = false) Double n,
+                                HttpServletRequest request) {
+    if (request.getHeader("jwt") == null) {
+      throw new NoTokenException();
+    } else if (jwtTokenUtil.isTokenExpired(jwtTokenUtil.getTokenFromRequest(request))) {
+      throw new TokenExpiredException();
+    } else if (n == null) {
+      return ResponseEntity.status(HttpStatus.OK).body(itemService.listListedSellableItemPojos(0));
     } else if (n - n.intValue() != 0 || n < 1) {
       throw new InvalidPageNumberException();
     } else {
       return ResponseEntity.status(HttpStatus.OK)
-          .body(itemService.listSellableItemDtos(n.intValue()));
+          .body(itemService.listListedSellableItemPojos(n.intValue()));
     }
   }
 
   @GetMapping("/item/{itemId}")
-  public ResponseEntity<?> sellableItem(@PathVariable(required = false) Long itemId) {
+  public ResponseEntity<?> sellableItem(@PathVariable Long itemId,
+                                        HttpServletRequest request) {
     Item item = itemService.findById(itemId);
-    if (item == null) {
+    if (request.getHeader("jwt") == null) {
+      throw new NoTokenException();
+    } else if (jwtTokenUtil.isTokenExpired(jwtTokenUtil.getTokenFromRequest(request))) {
+      throw new TokenExpiredException();
+    } else if (item == null) {
       throw new NoSuchItemException();
     } else {
-      SellabelItemDto sellabelItemDto = new SellabelItemDto(item.getName(), item.getDescription(),
-          item.getPhotoUrl(), item.getBids(), item.getPurchasePrice(),
-          item.getSeller().getUsername(),
-          item.isSellable() ? "Not yet sold" : "Sold",
-          item.isSellable() ? null : item.getBuyer().getUsername());
-      return ResponseEntity.status(HttpStatus.OK).body(sellabelItemDto);
+      ItemPojo itemPojo = itemService.createItemPojo(item);
+      return ResponseEntity.status(HttpStatus.OK).body(itemPojo);
     }
   }
 

@@ -6,7 +6,8 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class SellableItemListDto {
+public class ListedSellableItemPojo {
+  private Long itemId;
   private String name;
   private String photoUrl;
   private Bid highestBid;

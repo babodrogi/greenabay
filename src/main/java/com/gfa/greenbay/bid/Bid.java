@@ -9,11 +9,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Bid {
 
   @Id
@@ -24,5 +26,12 @@ public class Bid {
   @JsonIgnore
   private Item item;
   @ManyToOne
+  @JsonIgnore
   private User bidder;
+
+  public Bid(int amount, Item item, User bidder) {
+    this.amount = amount;
+    this.item = item;
+    this.bidder = bidder;
+  }
 }

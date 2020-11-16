@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class NewlyCreatedItemDto {
+public class NewlyCreatedItemPojo {
   private String name;
   private String description;
   private String photoUrl;

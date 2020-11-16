@@ -14,8 +14,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 @Component
 public class JwtTokenUtil implements Serializable {
-//  private static final long serialVersionUID = -2550185165626007488L;
-  public static final long JWT_TOKEN_VALIDITY = 60 * 60;
+
+  public static final long JWT_TOKEN_VALIDITY = 24 * 60 * 60;
 
   @Value(value = "${JWT_SECRET}")
   private String secret;
@@ -27,10 +27,6 @@ public class JwtTokenUtil implements Serializable {
 
   public String getUsernameFromToken(String token) {
     return getAllClaimsFromToken(token).get("username").toString();
-  }
-
-  public Long getUserIdFromToken(String token) {
-    return Long.parseLong(getAllClaimsFromToken(token).getSubject());
   }
 
   public Date getExpirationDateFromToken(String token) {
@@ -46,7 +42,7 @@ public class JwtTokenUtil implements Serializable {
     return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
   }
 
-  private Boolean isTokenExpired(String token) {
+  public Boolean isTokenExpired(String token) {
     final Date expiration = getExpirationDateFromToken(token);
     return expiration.before(new Date());
   }

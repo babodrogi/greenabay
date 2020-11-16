@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class SellabelItemDto {
+public class ItemPojo {
   private String name;
   private String description;
   private String photoUrl;
